@@ -54,36 +54,29 @@ Start-Process -FilePath "$($env:datevpp)\PROGRAMM\RWApplic\irw.exe" -ArgumentLis
 $dir = "$($env:temp)\IrwPerformanceIndex*.txt"
 write-host "dir" $dir
 
-write-host "USERNAME" $env:USERNAME
-write-host "USERPROFILE" $env:USERPROFILE
-write-host "COMPUTERNAME" $env:COMPUTERNAME
+#Umgebung ausgeben
+$Env = @{
+  "USERNAME"     = $env:USERNAME 
+  "USERPROFILE"  = $env:USERPROFILE
+  "COMPUTERNAME" = $env:COMPUTERNAME
+}
+$Env | ft
 
 $latest = Get-ChildItem -Path $dir | Sort-Object LastAccessTime -Descending | Select-Object -First 1
-write-host "latest.name" $latest.name
-write-host "latest.FullName" $latest.FullName
+$latest | ft name, FullName
 
 $iniFile = Get-IniFile $latest.FullName
 
-$StartScore = $iniFile.StartScore.Duration.replace(' Sekunden','')
-write-host "StartScore" $StartScore
+Clear-Variable result
+$result= [pscustomobject]($iniFile.StartScore,$iniFile.DataAccessScore,$iniFile.ProcessorScore,$iniFile.HardDiskScore,$iniFile.GuiScore,$iniFile.OverallScore | select @{Label="Name";E={$_.Name}},@{Label="Duration";E={$_.Duration.replace(' Sekunden','')}})
+$result
 
-$DataAccessScore = $iniFile.DataAccessScore.Duration.replace(' Sekunden','')
-write-host "DataAccessScore" $DataAccessScore
 
-$ProcessorScore = $iniFile.ProcessorScore.Duration.replace(' Sekunden','')
-write-host "ProcessorScore" $ProcessorScore
+#$iniFile | ConvertTo-Json
+#$iniFile.AssesmentInfo
+#$iniFile.ProcessorInfo
+#$iniFile.Common
 
-$HardDiskScore = $iniFile.HardDiskScore.Duration.replace(' Sekunden','')
-write-host "HardDiskScore" $HardDiskScore
-
-$ServiceScore = $iniFile.ServiceScore.Duration.replace(' Sekunden','')
-write-host "ServiceScore" $ServiceScore
-
-$GuiScore = $iniFile.GuiScore.Duration.replace(' Sekunden','')
-write-host "GuiScore" $GuiScore
-
-$OverallScore = $iniFile.OverallScore.Duration.replace(' Sekunden','')
-write-host "OverallScore" $OverallScore
 
 # UDF Feld für Datto RMM schreiben
 # New-ItemProperty -Path HKLM:\SOFTWARE\CentraStage -Name Custom16 -Value $OverallScore -Force
