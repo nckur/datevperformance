@@ -85,9 +85,14 @@ type "%uWorkDir%result.txt"
 ## Datev Leitungsindex silent ausführen
 https://github.com/glshnu/datevperformance/blob/main/leistungsindexsilent.ps1
 
+## HYPERV Performance Counter  
+https://github.com/glshnu/datevperformance/blob/main/getcounters.ps1  
+weitere Infos unter  
+http://wiki.webperfect.ch/index.php?title=Hyper-V:_Performance_(Counters)
+
 ## Links
 https://www.altaro.com/hyper-v/storage-performance-baseline-diskspd/  
 https://www.windowspro.de/marcel-kueppers/storage-performance-iops-unter-hyper-v-messen-diskspd
-https://docs.pexip.com/server_design/hyperv_numa_affinity.htm
+https://docs.pexip.com/server_design/hyperv_numa_affinity.htm  
 https://apps.datev.de/help-center/documents/1080028
 
