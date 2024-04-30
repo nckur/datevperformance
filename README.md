@@ -16,7 +16,7 @@ in der VM ausführen
 
 | Wert     | Bewertung |
 |----------|-----------|
-|> 118.000 |:+1: good  |
+|> 70.000  |:+1: good  |
 |< 66.000  |:-1: bad   |
 
 Total IO und sehen hier drei wichtige Kenndaten: 
@@ -44,7 +44,10 @@ Je mehr IOPS und je geringer die Latenz, umso besser.
 |ESXi6.5, HPE DL380 G9, DATEV FS VM2016 Pday 2020/12                              | 1.315,93        | 84.219,38  | 0,047       |
 |HPE Synergy / Pure Storage / Comput Module 480 Gen10 Hyper-V-2019 / VM 2019      |  2.136,80       | 139.260,66 | 0,026       |
 |Azure D4v3 VM2019 P30 Storage                                                    |1.806,71         |115.629,00  | 0,026       |
-|HyperV2019 VM2016 auf DELL R630 auf IBM AllFlash Shared Storage Raid5            | 1.030,99        | 65.983,21  | 0,060
+|HyperV2019 VM2016 auf DELL R630 auf IBM AllFlash Shared Storage Raid5            | 1.030,99        | 65.983,21  | 0,060       |
+|DATEV Partnerasp HCI Cluster mit SSD                                             | 1.355,98        | 86.782,81  | 0,046       |
+|DATEV Partnerasp HCI Cluster mit NVME                                            | 1.586,40        | 101.529,30 | 0,039       |
+
 
 
 
@@ -68,10 +71,66 @@ type "%uWorkDir%result.txt"
 |> 25.000  |:+1: good  |
 |< 16.000  |:-1: bad   |
 
+### Beim Einsatz von Microsoft Defender for Endpoints werden die Ergebnisse des Powershell Scripts verfälscht
+Unter dieser Umgebung kann die CPUperf.exe verwendet werden
+
+| Wert        | Bewertung |
+|-------------|-----------|
+|> 5.500.000  |:+1: good  |
+|< 4.100.000  |:-1: bad   |
+
 | Beschreibung                                                                                          | Wert       |
 |:------------------------------------------------------------------------------------------------------|-----------:|
 |VM2019 / HyperV2019 - HP DL380 XEON Gold 6254 3.10GHz - 1,5 Fach überbucht                             | 28.040     |
 |TSVM2016 32GB vRAM / 7 User DATEV / HyperV2019 - HP DL380 XEON Gold 6254 3.10GHz - 1,5 Fach überbucht  | 18.317     |
+
+## Referenzsystem 
+Wird von den Anwendern als gut bezeichnet. 
+
+### iPerf 
+zwischen zwei VMs (TS und DC). Beide auf gleichem Host.
+
+| Beschreibung                                                                                          | Wert               |
+|:------------------------------------------------------------------------------------------------------|-------------------:|
+|VM2022/HyperV2022 - HP DL380 XEON Gold 6342 2.8GHz, 10GBit/s Netzadapter                               | 6.64 Gbits/sec     |
+|VM2022/HyperV2022 - HP DL380 XEON Gold 6342 2.8GHz, 10GBit/s Netzadapter (10 Clients parallel) "-P 10" | 19 Gbits/sec       |
+
+### Diskspd auf DATEV Laufwerk
+
+| System                                                                               | Durchsatz MiB/s |    IOPS    |  Latenz/ms  |
+|:-------------------------------------------------------------------------------------|----------------:|-----------:|------------:|
+|VM2022/HYPERV2022, DATEV Shared Storage, MSDFE mDA [^1] - Local LWC in VM             |   1.131,98      | 72.446,55  |       0,055 |
+|VM2022/HYPERV2022, DATEV Shared Storage, MSDFE mDA [^1] - DATEV Netzlaufwerk in VM    |        1.303,08 |  83.397,32 |       0,048 |
+[^1]: MSDFE mDA = Microsoft Defender for Endpoints P1/P2 mit DATEV Ausschlüssen
+
+### DATEV Leistung Index auf TS ohne Benutzer
+   
+[StartScore] 3,205 Sekunden   
+[DataAccessScore] 0,943 Sekunden   
+[ProcessorScore] 0,683 Sekunden   
+[HardDiskScore] 0,889 Sekunden   
+[ServiceScore] 0,531 Sekunden   
+[GuiScore] 3,054 Sekunden  
+[OverallScore] 9,306 Sekunden  
+   
+[ProcessorInfo]   
+Processor=Intel(R) Xeon(R) Gold 6342 CPU @ 2.80GHz   
+Description=Intel64 Family 6 Model 106 Stepping 6   
+MaxClockSpeed=2793   
+NumberOfCores=3   
+NumberOfLogicalProcessors=6   
+   
+[ComputerInfo]   
+Model=Virtual Machine   
+TotalPhysicalMemory=32.766 MB   
+   
+[OperatingSystemInfo]   
+Caption=Microsoft Windows Server 2022 Standard   
+   
+   
+
+## CPU Performance prüfen
+[Prozessor messen](https://github.com/glshnu/datevperformance/blob/main/prozessor_messen.ps1)
 
 ## Überbuchung prüfen
 [Check vCPU Ratios](https://github.com/glshnu/datevperformance/blob/main/checkvCPURatios.ps1)
@@ -89,6 +148,9 @@ https://github.com/glshnu/datevperformance/blob/main/leistungsindexsilent.ps1
 https://github.com/glshnu/datevperformance/blob/main/getcounters.ps1  
 weitere Infos unter  
 http://wiki.webperfect.ch/index.php?title=Hyper-V:_Performance_(Counters)
+
+## Datev Performance Checkliste
+https://github.com/glshnu/datevperformance/blob/main/checkliste.md
 
 ## Links
 https://www.altaro.com/hyper-v/storage-performance-baseline-diskspd/  
